@@ -26,7 +26,4 @@
         "**/.pytest_cache": true,
         ".venv": true
     },
-
-    // Ativa ambientes Poetry
-    "python.terminal.activateEnvironment": true
 }
