@@ -1,30 +1,24 @@
-import click
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
-
-
-@click.command("init-db")
-def init_db_command():
-    db.create_all()
-    click.echo("initialized the database")
+from src.app.externals.db.connection import engine
+from src.app.externals.models import Category, Transaction, User
+from src.app.externals.models.base import Base
 
 
-def create_app(test_config=None):
+def create_app():
     app = Flask(__name__)
-    app.config.from_mapping(
-        SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI="sqlite:///financeplus.db",
-    )
 
-    if test_config is None:
-        app.config.from_pyfile("config.py", silent=True)
-    else:
-        app.config.from_mapping(test_config)
+    # Criar todas as tabelas (uma única vez)
+    with app.app_context():
+        Base.metadata.create_all(bind=engine)
 
-    db.init_app(app)
-
-    app.cli.add_command(init_db_command)
+    @app.route("/")
+    def home():
+        return "FinancePlus API - funcionando! 🚀"
 
     return app
+
+
+app = create_app()
+if __name__ == "__main__":
+    app.run(debug=True)
