@@ -4,6 +4,8 @@ from src.app.externals.db.connection import engine
 from src.app.externals.models import Category, Transaction, User
 from src.app.externals.models.base import Base
 
+from src.app.controllers.user_controller import user_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -15,6 +17,8 @@ def create_app():
     @app.route("/")
     def home():
         return "FinancePlus API - funcionando! 🚀"
+    
+    app.register_blueprint(user_bp)
 
     return app
 
