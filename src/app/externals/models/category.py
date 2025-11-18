@@ -53,7 +53,6 @@ class Category(Base):
         return {
             "id": str(self.id),
             "name": self.name,
-            "email_address": self.email_address,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

@@ -5,6 +5,9 @@ from src.app.externals.models import Category, Transaction, User
 from src.app.externals.models.base import Base
 
 from src.app.controllers.user_controller import user_bp
+from src.app.controllers.category_controller import category_bp
+from src.app.controllers.transaction_controller import transaction_bp
+
 
 
 def create_app():
@@ -19,6 +22,9 @@ def create_app():
         return "FinancePlus API - funcionando! 🚀"
     
     app.register_blueprint(user_bp)
+    app.register_blueprint(category_bp)
+    app.register_blueprint(transaction_bp)
+
 
     return app
 
