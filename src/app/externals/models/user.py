@@ -54,7 +54,7 @@ class User(Base):
         nullable=False,
     )
     name: Mapped[str] = mapped_column(String, nullable=False)
-    email_address: Mapped[EmailType] = mapped_column(
+    email: Mapped[EmailType] = mapped_column(
         EmailType, nullable=False, unique=True
     )
     password: Mapped[PasswordType] = mapped_column(PasswordType, nullable=False)
@@ -82,7 +82,7 @@ class User(Base):
         return {
             "id": str(self.id),
             "name": self.name,
-            "email_address": self.email_address,
+            "email": self.email,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
