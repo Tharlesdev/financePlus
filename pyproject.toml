@@ -8,6 +8,12 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "flask (>=3.1.2,<4.0.0)",
+    "flask-migrate (>=4.1.0,<5.0.0)",
+    "flask-sqlalchemy (>=3.1.1,<4.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "sqlalchemy-utils (>=0.42.0,<0.43.0)",
+    "pytest (>=8.4.2,<9.0.0)"
 ]
 
 
@@ -19,6 +25,18 @@ build-backend = "poetry.core.masonry.api"
 pylint = "^3.3.8"
 black = "^25.9.0"
 isort = "^6.0.1"
+
+[tool.pytest.ini_options]
+addopts = "-ra -vvv"
+testpaths = [
+    "tests"
+]
+
+[tool.poetry]
+name = "financeplus"
+packages = [
+    { include = "financeplus", from = "src" }
+]
 
 [tool.black]
 line-length = 88
