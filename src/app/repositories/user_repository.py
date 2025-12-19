@@ -6,7 +6,7 @@ class UserRepository:
         session = SessionLocal()
         user = User(
             name=data["name"],
-            email_address=data["email_address"],
+            email=data["email"],
             password=data["password"]
         )
         session.add(user)
