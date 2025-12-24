@@ -2,7 +2,7 @@
 
 API REST para controle financeiro pessoal, com autenticação via JWT, categorias e transações por usuário.
 
-Projeto desenvolvido com foco em **boas práticas backend**, **testes de integração** e **arquitetura limpa**, ideal para estudos, portfólio e entrevistas.
+Projeto desenvolvido com foco em **boas práticas backend**, **testes de integração** e **arquitetura limpa**.
 
 ---
 
