@@ -113,7 +113,7 @@ DATABASE_URL=sqlite:///financeplus.db
 ```bash
 poetry install
 poetry shell
-flask run
+flask run # ou flask --app src.app.app:create_app --debug run
 ```
 
 API disponível em:

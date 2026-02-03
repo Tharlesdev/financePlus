@@ -51,6 +51,16 @@ class AuthService:
         
         finally:
             db.close()
+    
+    def get_me(self, user_id: str):
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return None
+            return user.as_dict
+        finally:
+            db.close()
 
 
 

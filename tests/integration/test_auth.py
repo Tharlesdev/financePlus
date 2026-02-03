@@ -36,3 +36,13 @@ def test_protected_route_with_auth(client, auth_headers):
     res = client.get("/transactions/", headers=auth_headers)
 
     assert res.status_code == 200
+
+def test_auth_me(client, auth_headers):
+    res = client.get("/auth/me", headers=auth_headers)
+
+    assert res.status_code == 200
+    data = res.get_json()
+
+    assert data["user_id"] is not None
+    assert "name" in data
+    assert "email" in data
