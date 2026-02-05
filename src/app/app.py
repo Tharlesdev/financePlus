@@ -1,3 +1,4 @@
+from flask_cors import CORS
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -16,6 +17,7 @@ from src.app.controllers.transaction_controller import transaction_bp
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
 
     # Criar todas as tabelas (uma única vez)
     with app.app_context():
@@ -24,6 +26,10 @@ def create_app():
     @app.route("/")
     def home():
         return "FinancePlus API - funcionando! 🚀"
+
+    @app.route("/health")
+    def health():
+        return {"status": "ok"}, 200
     
     app.register_blueprint(user_bp)
     app.register_blueprint(category_bp)
@@ -31,3 +37,5 @@ def create_app():
     app.register_blueprint(auth_bp)
 
     return app
+
+
