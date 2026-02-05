@@ -13,7 +13,10 @@ class TransactionService:
         db = SessionLocal()
         try:
             data["user_id"] = UUID(data["user_id"])
-            data["category_id"] = UUID(data["category_id"])
+            if data.get("category_id"):
+                data["category_id"] = UUID(data["category_id"])
+            else:
+                data["category_id"] = None
 
             # amount deve ser float/decimal
             data["amount"] = float(data["amount"])

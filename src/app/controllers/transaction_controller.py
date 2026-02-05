@@ -13,12 +13,17 @@ transaction_bp = Blueprint("transaction", __name__, url_prefix="/transactions")
 @transaction_bp.route("/", methods=["GET"])
 @auth_required
 def list_transactions():
-    filters = request.args.to_dict()
+    filters = dict(request.args)
 
-    filters["user_id"] = request.user_id  # 🔥 vem do JWT
-    
+    # 🔥 user_id vem SEMPRE do token
+    filters["user_id"] = request.user_id
+
     result = transaction_service.list(filters)
-    
+
+    # caso de erro
+    if isinstance(result, tuple):
+        return jsonify(result[0]), result[1]
+
     return jsonify(result), 200
 
 
