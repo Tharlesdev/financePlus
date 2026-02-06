@@ -1,5 +1,6 @@
 from src.app.externals.db.connection import SessionLocal
 from src.app.externals.models.user import User
+import uuid
 
 class UserRepository:
     def create_user(self, data):
@@ -23,9 +24,19 @@ class UserRepository:
 
     def get_user_by_id(self, user_id):
         session = SessionLocal()
+        if isinstance(user_id, str):
+            user_id = uuid.UUID(user_id)
         user = session.get(User, user_id)
         session.close()
         return user.as_dict if user else None
+
+    def get_by_email(self, email):
+        session = SessionLocal()
+        try:
+            user = session.query(User).filter(User.email == email).first()
+            return user
+        finally:
+            session.close()
 
     def update_user(self, user_id, data):
         session = SessionLocal()

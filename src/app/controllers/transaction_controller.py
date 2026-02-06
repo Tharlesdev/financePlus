@@ -3,6 +3,8 @@ from uuid import UUID
 
 from src.app.services.transaction_service import transaction_service
 from src.app.security.auth_required import auth_required
+from src.app.schemas.transaction_schemas import TransactionCreate
+from pydantic import ValidationError
 
 transaction_bp = Blueprint("transaction", __name__, url_prefix="/transactions")
 
@@ -33,13 +35,19 @@ def list_transactions():
 @transaction_bp.route("/", methods=["POST"])
 @auth_required
 def create_transaction():
-    data = request.json
+    try:
+        data = request.json
+        validated_data = TransactionCreate(**data)
+        
+        service_data = validated_data.model_dump()
+        # user_id sempre vem do token
+        service_data["user_id"] = request.user_id
 
-    # user_id sempre vem do token
-    data["user_id"] = request.user_id
-
-    created = transaction_service.create_transaction(data)
-    return jsonify(created), 201
+        created = transaction_service.create_transaction(service_data)
+        return jsonify(created), 201
+        
+    except ValidationError as e:
+        return jsonify(e.errors()), 400
 
 
 # -------------------------------------------
@@ -65,18 +73,27 @@ def get_transaction(transaction_id):
 @transaction_bp.route("/<transaction_id>", methods=["PUT"])
 @auth_required
 def update_transaction(transaction_id):
-    data = request.json
+    try:
+        data = request.json
+        # Para update, talvez nem todos os campos sejam obrigatórios. 
+        # Mas vamos usar TransactionCreate por enquanto ou criar TransactionUpdate.
+        # Se TransactionCreate exige tudo, o update vai exigir tudo.
+        # Vamos assumir que PUT substitui o recurso (padrão REST), então exigir tudo é ok.
+        validated_data = TransactionCreate(**data)
+        
+        # valida dono
+        existing = transaction_service.get_transaction_by_id(transaction_id)
+        if not existing:
+            return jsonify({"error": "Transação não encontrada"}), 404
 
-    # valida dono
-    existing = transaction_service.get_transaction_by_id(transaction_id)
-    if not existing:
-        return jsonify({"error": "Transação não encontrada"}), 404
+        if existing["user_id"] != str(request.user_id):
+            return jsonify({"error": "Acesso negado"}), 403
 
-    if existing["user_id"] != str(request.user_id):
-        return jsonify({"error": "Acesso negado"}), 403
-
-    updated = transaction_service.update_transaction(transaction_id, data)
-    return jsonify(updated), 200
+        updated = transaction_service.update_transaction(transaction_id, validated_data.model_dump())
+        return jsonify(updated), 200
+        
+    except ValidationError as e:
+        return jsonify(e.errors()), 400
 
 
 # -------------------------------------------

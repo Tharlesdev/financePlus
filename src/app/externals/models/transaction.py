@@ -2,13 +2,17 @@
 # pylint: disable=R0901
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import DECIMAL, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.app.externals.models.base import Base
+
+
+def utc_now():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class Transaction(Base):
@@ -28,11 +32,11 @@ class Transaction(Base):
     description: Mapped[str | None] = mapped_column(String, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=datetime.utcnow
+        DateTime, nullable=False, default=utc_now
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=True, onupdate=datetime.utcnow
+        DateTime, nullable=True, onupdate=utc_now
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)

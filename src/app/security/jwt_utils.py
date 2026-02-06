@@ -1,6 +1,6 @@
 import os
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 def create_token(user_id: str):
@@ -11,8 +11,8 @@ def create_token(user_id: str):
 
     payload = {
         "sub": user_id,
-        "iat": datetime.utcnow(),
-        "exp": datetime.utcnow() + timedelta(hours=8),
+        "iat": datetime.now(timezone.utc),
+        "exp": datetime.now(timezone.utc) + timedelta(hours=8),
     }
 
     return jwt.encode(payload, secret_key, algorithm="HS256")

@@ -3,7 +3,7 @@
 
 import hashlib
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from random import randint
 from typing import TYPE_CHECKING
 
@@ -19,6 +19,10 @@ from src.app.externals.models.base import Base
 if TYPE_CHECKING:
     from src.app.externals.models.category import Category
     from src.app.externals.models.transaction import Transaction
+
+
+def utc_now():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class PasswordType(TypeDecorator):
@@ -60,11 +64,11 @@ class User(Base):
     password: Mapped[PasswordType] = mapped_column(PasswordType, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=datetime.utcnow
+        DateTime, nullable=False, default=utc_now
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=True, onupdate=datetime.utcnow
+        DateTime, nullable=True, onupdate=utc_now
     )
 
     categories: Mapped[list["Category"]] = relationship(

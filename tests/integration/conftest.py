@@ -1,7 +1,7 @@
 import os
 
 os.environ["DATABASE_URL"] = "sqlite:///test.db"
-os.environ["JWT_SECRET_KEY"] = "test-secret-key"
+os.environ["JWT_SECRET_KEY"] = "super_secure_test_secret_key_that_is_long_enough_for_sha256"
 
 import pytest
 import uuid

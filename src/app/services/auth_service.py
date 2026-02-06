@@ -1,13 +1,12 @@
-from src.app.externals.db.connection import SessionLocal
-from src.app.externals.models.user import User
+from src.app.repositories.user_repository import UserRepository
 from src.app.externals.exceptions import PasswordIncorrectException
-from src.app.security.jwt_utils import create_token
 
 
 class AuthService:
+    def __init__(self):
+        self.user_repo = UserRepository()
 
     def register(self, data: dict):
-        db = SessionLocal()
         try:
             name = data.get("name")
             email = data.get("email")
@@ -16,30 +15,26 @@ class AuthService:
             if not name or not email or not password:
                 return {"error": "Campos obrigatórios faltando"}, 400
 
-            existing = db.query(User).filter(User.email == email).first()
+            existing = self.user_repo.get_by_email(email)
             if existing:
                 return {"error": "E-mail já registrado"}, 409
 
-            user = User(
-                name=name,
-                email=email,
-                password=password
-            )
+            user_data = {
+                "name": name,
+                "email": email,
+                "password": password
+            }
+            # UserRepository.create_user retorna dict
+            user_dict = self.user_repo.create_user(user_data)
 
-            db.add(user)
-            db.commit()
-            db.refresh(user)
+            return user_dict, 201
 
-            return user.as_dict, 201
-
-        finally:
-            db.close()
+        except Exception as e:
+             return {"error": str(e)}, 500
 
     def login(self, email: str, password: str):
-        db = SessionLocal()
-
         try:
-            user = db.query(User).filter(User.email == email).first()
+            user = self.user_repo.get_by_email(email)
             if not user:
                 return None
 
@@ -48,19 +43,14 @@ class AuthService:
         
         except PasswordIncorrectException:
             return None
-        
-        finally:
-            db.close()
+        except Exception:
+            return None
     
     def get_me(self, user_id: str):
-        db = SessionLocal()
-        try:
-            user = db.query(User).filter(User.id == user_id).first()
-            if not user:
-                return None
-            return user.as_dict
-        finally:
-            db.close()
+        # user_repo.get_user_by_id retorna dict. 
+        # Se quisermos retornar dict, tudo bem.
+        return self.user_repo.get_user_by_id(user_id)
+
 
 
 

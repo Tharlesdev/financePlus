@@ -2,7 +2,7 @@
 # pylint: disable=R0901
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String
@@ -13,6 +13,10 @@ from src.app.externals.models.base import Base
 
 if TYPE_CHECKING:
     from src.app.externals.models.transaction import Transaction
+
+
+def utc_now():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class Category(Base):
@@ -30,11 +34,11 @@ class Category(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=datetime.utcnow
+        DateTime, nullable=False, default=utc_now
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=True, onupdate=datetime.utcnow
+        DateTime, nullable=True, onupdate=utc_now
     )
 
     name: Mapped[str] = mapped_column(String, nullable=False)
